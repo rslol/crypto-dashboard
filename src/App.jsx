@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Container, Grid, Card, Image, Group, Text, Badge, Button } from "@mantine/core";
+import { Container, Grid, Card, Image, Group, Text, Badge, Button, Drawer } from "@mantine/core";
 import { CryptoLoader } from "./components/Loader";
 import { useData } from "./hooks/useData";
 
 const App = () => {
     const [coinData, setCoinData] = useState({}); 
-    const [selectedData, setSelectedData] = useState([]);
-    const { data, isLoading, error } = useData();
+    const [selectedCoin, setSelectedCoin] = useState([]);
+    const { data, isLoading, error } = useData(); // pass a number when ready to call api in intervals
    
     useEffect(() => {
         if (data && data.length) {
@@ -21,11 +21,10 @@ const App = () => {
 
             setCoinData(dataMap);
         }
-    }, [data, isLoading]);
+    }, [data]);
 
-    const displayCharts = (id) => {
-        console.log(coinData[id], "::: is this being logged");
-        setSelectedData(coinData[id]); 
+    const selectCoin = (id) => {
+        setSelectedCoin(coinData[id]); 
     };
 
     return (
@@ -41,16 +40,18 @@ const App = () => {
                                             src={coin.image}
                                             height={160}
                                             alt={coin.name}
+                                            fit='contain'
                                         />
                                     </Card.Section>
                                     <Group justify="space-between" mt="md" mb="xs">
                                         <Text fw={500}>{coin.name}</Text>
                                         <Badge color="pink">Rank: {coin.market_cap_rank}</Badge>
                                     </Group>
-
-                                    <Button color="blue" fullWidth mt="md" radius="md" onClick={() => displayCharts(coin.id)}>
-                                        {coin.name} Charts
-                                    </Button>
+                                    <Grid.Col span='4'>
+                                         <Button color="blue" fullWidth mt="md" radius="md" onClick={() => selectCoin(coin.id)}>
+                                            {coin.name} Charts
+                                        </Button>
+                                    </Grid.Col>
                                 </Card>
                             </Grid.Col>
                         )
@@ -58,7 +59,7 @@ const App = () => {
                 </Grid>
             </CryptoLoader>
         </Container>
-    )
+    );
 }; 
 
 export default App;
